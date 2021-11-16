@@ -26,3 +26,7 @@ other_player(Player_1, Player_2):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Checking the pairs.
 pair((Point, Merel), Point, Merel).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Merel, point and positions.
+merel_on_board((Point, Merel), Board):-
+  member((Point, Merel), Board).
