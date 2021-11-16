@@ -323,19 +323,29 @@ find_mill(Node, Board, Player):-
   row(_Node3, Node, _Node4),
   row(_Node5, _Node6, Node).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Mixing two functions for using Point in both.
+get_legal_place_and_find_mill(Player, Point, Board):-
+  get_legal_place(Player, Point, Board),
+  find_mill(Point, Board, Player).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Mixing two functions for using Point in both.
+get_remove_point_and_report_remove(Player, Point, Board):-
+  get_remove_point(Player, Point, Board),
+  report_remove(Player, Point).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Not all the merels have been placed. We can get a (legal) placing from the
 % player named in argument 1, fill the point he or she gives, check for any new 
 % mills, and ask which piece to remove if so, display the board, switch players 
 % and then play again, with the updated board and the new player.
 play(Number, Player, Board):-
   display_board(Board),
-  get_legal_place(Player, Point, Board),
-  find_mill(Point, Board, Player),
+  get_legal_place_and_find_mill(Player, Point, Board),
+  get_remove_point_and_report_remove(Player, Point, Board).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Running the game
 % play :- 
 %   welcome,
-%   initial_board(Board),
-%   display_board(Board),
-%   is_player1(Player),
-%   play(18, Player, Board).
+%   initial_board( Board ),
+%   display_board( Board ),
+%   is_player1( Player ),
+%   play( 18, Player, Board ).
