@@ -310,12 +310,6 @@ and_the_winner_is(Board, Player):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Operating the play/3
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Frist possibility: All the merels have been placed, the board represents a
-%  winning state, and we have to report the winner. Then we are finished.
-play(0, Player, Board):-
-  display_board(Board),
-  and_the_winner_is(Board, Player).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % A predicate that finds out 3 merels in a row.
 find_mill(Node, Board, Player):-
   member((Node, Player), Board),
@@ -333,6 +327,12 @@ get_remove_point_and_report_remove(Player, Point, Board):-
   get_remove_point(Player, Point, Board),
   report_remove(Player, Point).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Frist possibility: All the merels have been placed, the board represents a
+%  winning state, and we have to report the winner. Then we are finished.
+play(0, Player, Board):-
+  display_board(Board),
+  and_the_winner_is(Board, Player).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Not all the merels have been placed. We can get a (legal) placing from the
 % player named in argument 1, fill the point he or she gives, check for any new 
 % mills, and ask which piece to remove if so, display the board, switch players 
@@ -340,7 +340,9 @@ get_remove_point_and_report_remove(Player, Point, Board):-
 play(Number, Player, Board):-
   display_board(Board),
   get_legal_place_and_find_mill(Player, Point, Board),
-  get_remove_point_and_report_remove(Player, Point, Board).
+  get_remove_point_and_report_remove(Player, Point, Board),
+  display_board(Board),
+  Number1 is Number-1,
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Running the game
 % play :- 
