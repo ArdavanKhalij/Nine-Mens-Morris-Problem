@@ -18,3 +18,8 @@ is_merel(Player):-
 is_merel(Player):-
   is_player2(Player).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Check both players and check that they are not the same.
+other_player(Player_1, Player_2):-
+  is_player1(Player_1),
+  is_player2(Player_2),
+  \+ Player_1 = Player_2.
