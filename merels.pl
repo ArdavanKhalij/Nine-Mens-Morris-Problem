@@ -163,7 +163,7 @@ initial_board(Board):-
 % Spotting a winner (15%)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% First way to loose (No other available move).
+% First way to lose (No other available move).
 and_the_winner_is(Board, Player):-
   is_player1(Player),
   \+get_legal_move(z, a, b, Board),
