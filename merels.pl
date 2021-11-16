@@ -316,13 +316,21 @@ play(0, Player, Board):-
   display_board(Board),
   and_the_winner_is(Board, Player).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A predicate that finds out 3 merels in a row.
+find_mill(Node, Board, Player):-
+  member((Node, Player), Board),
+  row(Node, _Node1, _Node2),
+  row(_Node3, Node, _Node4),
+  row(_Node5, _Node6, Node).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Not all the merels have been placed. We can get a (legal) placing from the
 % player named in argument 1, fill the point he or she gives, check for any new 
 % mills, and ask which piece to remove if so, display the board, switch players 
 % and then play again, with the updated board and the new player.
 play(Number, Player, Board):-
   display_board(Board),
-  get_legal_place(Player, Point, Board).
+  get_legal_place(Player, Point, Board),
+  find_mill(Point, Board, Player),
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Running the game
 % play :- 
