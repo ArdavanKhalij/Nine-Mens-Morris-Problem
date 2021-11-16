@@ -298,3 +298,31 @@ and_the_winner_is(Board, Player):-
   \+get_legal_move(y, o, x, Board),
   \+get_legal_move(y, x, o, Board),
   report_winner(Player).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Second way to lose (only two merels left).
+% Counting the number of merels of players for finding the loser
+count_all_merels_of_a_player([], Merel, 0).
+count_all_merels_of_a_player([(_,Merel)|Tail],Merel,Number):- 
+  count_all_merels_of_a_player(Tail,Merel,Number1), 
+  Number is Number1+1.
+count_all_merels_of_a_player([(_,Merel1)|Tail],Merel,Number1):-
+  Merel1\=Merel,
+  count_all_merels_of_a_player(Tail,MerelX,Number1).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Check if Number of merels is what we want for a loser palyer (2).
+is_it_a_loser1(Board, Number, N):-
+  count_all_merels_of_a_player(Board, z, N),
+  Number = N.
+is_it_a_loser2(Board, Number, N):-
+  count_all_merels_of_a_player(Board, y, N),
+  Number = N.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Second and_the_winner_is predicate.
+and_the_winner_is(Board, Player):-
+  is_player1(Player),
+  is_it_a_loser1(Board, 2, Number),
+  report_winner(Player).
+and_the_winner_is(Board, Player):-
+  is_player2(Player),
+  is_it_a_loser2(Board, 2, Number).
+  report_winner(Player).
