@@ -23,3 +23,6 @@ other_player(Player_1, Player_2):-
   is_player1(Player_1),
   is_player2(Player_2),
   \+ Player_1 = Player_2.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Checking the pairs.
+pair((Point, Merel), Point, Merel).
