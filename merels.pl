@@ -130,3 +130,31 @@ connected(c, o).
 connected(o, c).
 connected(o, x).
 connected(x, o).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Checking if boerd is in its initial state.
+% name of the point means empty, y is for the first players and z is for second player
+initial_board(Board):-
+  merel_on_board((a, a), Board),
+  merel_on_board((b, b), Board),
+  merel_on_board((c, c), Board),
+  merel_on_board((d, d), Board),
+  merel_on_board((e, e), Board),
+  merel_on_board((f, f), Board),
+  merel_on_board((g, g), Board),
+  merel_on_board((h, h), Board),
+  merel_on_board((i, i), Board),
+  merel_on_board((j, j), Board),
+  merel_on_board((k, k), Board),
+  merel_on_board((l, l), Board),
+  merel_on_board((m, m), Board),
+  merel_on_board((n, n), Board),
+  merel_on_board((o, o), Board),
+  merel_on_board((p, p), Board),
+  merel_on_board((q, q), Board),
+  merel_on_board((r, r), Board),
+  merel_on_board((s, s), Board),
+  merel_on_board((t, t), Board),
+  merel_on_board((u, u), Board),
+  merel_on_board((v, v), Board),
+  merel_on_board((w, w), Board),
+  merel_on_board((x, x), Board).
