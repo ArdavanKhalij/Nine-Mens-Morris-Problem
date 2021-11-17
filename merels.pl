@@ -317,15 +317,29 @@ find_mill(Node, Board, Player):-
   row(_Node3, Node, _Node4),
   row(_Node5, _Node6, Node).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Mixing two functions for using Point in both.
+% Mixing two predicates for using Point in both.
 get_legal_place_and_find_mill(Player, Point, Board):-
   get_legal_place(Player, Point, Board),
   find_mill(Point, Board, Player).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Mixing two functions for using Point in both.
+% Mixing two predicates for using Point in both.
 get_remove_point_and_report_remove(Player, Point, Board):-
   get_remove_point(Player, Point, Board),
   report_remove(Player, Point).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Switch to other player
+switch_player(Player, Result):-
+  Player = y,
+  Result is z.
+switch_player(Player, Result):-
+  Player = z,
+  Result is y.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Mixing two predicates for using Number1 and Result in both.
+switch_player_and_play_again_and_reduce_number(Number, Board, Player, Result, Number1):-
+  Number1 is Number-1,
+  switch_player(Player, Result),
+  play(Number1, Result, Board).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Frist possibility: All the merels have been placed, the board represents a
 %  winning state, and we have to report the winner. Then we are finished.
@@ -342,7 +356,7 @@ play(Number, Player, Board):-
   get_legal_place_and_find_mill(Player, Point, Board),
   get_remove_point_and_report_remove(Player, Point, Board),
   display_board(Board),
-  Number1 is Number-1,
+  switch_player_and_play_again_and_reduce_number(Number, Board, Player, Result, Number1).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Running the game
 % play :- 
