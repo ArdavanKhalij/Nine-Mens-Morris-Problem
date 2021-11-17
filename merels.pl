@@ -341,22 +341,24 @@ switch_player_and_play_again_and_reduce_number(Number, Board, Player, Result, Nu
   switch_player(Player, Result),
   play(Number1, Result, Board).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Frist possibility: All the merels have been placed, the board represents a
+% First possibility: All the merels have been placed, the board represents a
 %  winning state, and we have to report the winner. Then we are finished.
 play(0, Player, Board):-
   display_board(Board),
   and_the_winner_is(Board, Player).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% All the merels have been placed. We can get a (legal) move from the player 
-% named in argument 1, move the merel he or she gives, check for any new mills, 
-% and ask which piece to remove if so, display the board, switch players and 
-% then play again, with the updated board and the new player.
-play(0, Player, Board).
+% Second possibility: All the merels have been placed. We can get a (legal) 
+% move from the player named in argument 1, move the merel he or she gives, 
+% check for any new mills, and ask which piece to remove if so, display the board, 
+% switch players and then play again, with the updated board and the new player.
+play(0, Player, Board):-
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Not all the merels have been placed. We can get a (legal) placing from the
-% player named in argument 1, fill the point he or she gives, check for any new 
-% mills, and ask which piece to remove if so, display the board, switch players 
-% and then play again, with the updated board and the new player.
+% Third possibility: Not all the merels have been placed. We can get a (legal)
+% placing from the player named in argument 1, fill the point he or she gives, 
+%check for any new mills, and ask which piece to remove if so, display the 
+% board, switch players and then play again, with the updated board and the 
+% new player.
 play(Number, Player, Board):-
   display_board(Board),
   get_legal_place_and_find_mill(Player, Point, Board),
