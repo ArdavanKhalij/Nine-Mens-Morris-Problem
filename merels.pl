@@ -57,6 +57,7 @@ pair((Point, Merel), Point, Merel):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Merel, point and positions.
 merel_on_board((Point, Merel), Board):-
+  pair((Point, Merel), Point, Merel),
   member((Point, Merel), Board).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Rows
