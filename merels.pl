@@ -12,6 +12,32 @@ is_player1(y).
 % Defining the name of second player.
 is_player2(z).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Adding points as facts.
+point(a).
+point(b).
+point(c).
+point(d).
+point(e).
+point(f).
+point(g).
+point(h).
+point(i).
+point(j).
+point(k).
+point(l).
+point(m).
+point(n).
+point(o).
+point(p).
+point(q).
+point(r).
+point(s).
+point(t).
+point(u).
+point(v).
+point(w).
+point(x).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Check the players name.
 is_merel(Player):-
   is_player1(Player).
