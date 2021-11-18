@@ -53,7 +53,7 @@ other_player(Player_1, Player_2):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Checking the pairs.
 pair((Point, Merel), Point, Merel):-
-  points(Point),
+  point(Point),
   is_merel(Merel).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Merel, point and positions.
@@ -436,9 +436,9 @@ play(Number, Player, Board):-
   switch_player_and_play_again_and_reduce_number(Number, Board, Player, Result, Number1).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Running the game
-% play :-
-%   welcome,
-%   initial_board( Board ),
-%   display_board( Board ),
-%   is_player1( Player ),
-%   play( 18, Player, Board ).
+play :-
+  welcome,
+  initial_board(Board),
+  display_board(Board),
+  is_player1(Player),
+  play(18, Player, Board).
