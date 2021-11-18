@@ -384,6 +384,11 @@ switch_player(Player, Result):-
   Player = z,
   Result is y.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Mixing two predicates for using Result in both.
+switch_player_and_play_again(Board, Player, Result):-
+  switch_player(Player, Result),
+  play(0, Result, Board).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Mixing two predicates for using Number1 and Result in both.
 switch_player_and_play_again_and_reduce_number(Number, Board, Player, Result, Number1):-
   Number1 is Number-1,
@@ -401,8 +406,17 @@ play(0, Player, Board):-
 % check for any new mills, and ask which piece to remove if so, display the board,
 % switch players and then play again, with the updated board and the new player.
 % !!!!!!!!!!!!!!!!!!
+% If we make a mill.
 play(0, Player, Board):-
+  display_board(Board),
   get_legal_move_and_find_mill(Player, OldPoint, NewPoint, Board),
+  get_remove_point_and_report_remove(Player, Point, Board),
+  display_board(Board),
+  switch_player_and_play_again(Board, Player, Result).
+% If we dont make a mill.
+play(0, Player, Board):-
+  display_board(Board),
+  switch_player_and_play_again(Board, Player, Result).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Second possibility: Not all the merels have been placed. We can get a (legal)
 % placing from the player named in argument 1, fill the point he or she gives,
