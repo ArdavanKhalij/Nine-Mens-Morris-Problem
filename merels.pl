@@ -397,7 +397,6 @@ switch_player_and_play_again_and_reduce_number(Number, Board, Player, Result, Nu
 % First possibility: All the merels have been placed, the board represents a
 %  winning state, and we have to report the winner. Then we are finished.
 play(0, Player, Board):-
-  display_board(Board),
   and_the_winner_is(Board, Player).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Third possibility: All the merels have been placed. We can get a (legal)
@@ -407,7 +406,6 @@ play(0, Player, Board):-
 % !!!!!!!!!!!!!!!!!!
 % If we make a mill.
 play(0, Player, Board):-
-  display_board(Board),
   get_legal_move_and_find_mill(Player, OldPoint, NewPoint, Board),
   get_remove_point_and_report_remove(Player, Point, Board),
   display_board(Board),
@@ -425,7 +423,6 @@ play(0, Player, Board):-
 % !!!!!!!!!!!!!!!!!!
 % If we make a mill.
 play(Number, Player, Board):-
-  display_board(Board),
   get_legal_place_and_find_mill(Player, Point, Board),
   get_remove_point_and_report_remove(Player, Point, Board),
   display_board(Board),
