@@ -51,7 +51,9 @@ other_player(Player_1, Player_2):-
   \+ Player_1 = Player_2.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Checking the pairs.
-pair((Point, Merel), Point, Merel).
+pair((Point, Merel), Point, Merel):-
+  points(Point),
+  is_merel(Merel).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Merel, point and positions.
 merel_on_board((Point, Merel), Board):-
