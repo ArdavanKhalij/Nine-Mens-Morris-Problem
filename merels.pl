@@ -316,22 +316,28 @@ and_the_winner_is(Board, Player):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Operating the play/3
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% A predicate that finds out 3 merels in a row.
-% !!!!!!!!!!!!!!!!!!
+% Returns true if Node1, Node2 and Node3 are full with merels of one player and
+% also if they are in a row.
+mill(Node1, Node2, Node3, Player, Board):-
+  row(Node1, Node2, Node3),
+  merel_on_board((Node1, Player), Board),
+  merel_on_board((Node2, Player), Board),
+  merel_on_board((Node3, Player), Board).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A predicate that finds out 3 merels are in a row (3 possible ways because we
+% only have 1 node of three needed nodes).
 find_mill(Node, Board, Player):-
-  member((Node, Player), Board),
-  row(Node, _, _),
-  row(_, Node, _),
-  row(_, _, Node).
+  merel_on_board((Node, Player), Board),
+  mill(Node, _, _, Player, Board),
+  mill(_, Node, _, Player, Board),
+  mill(_, _, Node, Player, Board).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Mixing two predicates for using Point in both.
-% !!!!!!!!!!!!!!!!!!
 get_legal_place_and_find_mill(Player, Point, Board):-
   get_legal_place(Player, Point, Board),
   find_mill(Point, Board, Player).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Mixing two predicates for using Point in both.
-% !!!!!!!!!!!!!!!!!!
 get_legal_move_and_find_mill(Player, OldPoint, NewPoint, Board):-
   get_legal_move(Player, OldPoint, NewPoint, Board),
   find_mill(NewPoint, Board, Player).
@@ -374,6 +380,7 @@ play(0, Player, Board):-
 % check for any new mills, and ask which piece to remove if so, display the
 % board, switch players and then play again, with the updated board and the
 % new player.
+% !!!!!!!!!!!!!!!!!!
 % If we make a mill.
 play(Number, Player, Board):-
   display_board(Board),
@@ -383,8 +390,6 @@ play(Number, Player, Board):-
   switch_player_and_play_again_and_reduce_number(Number, Board, Player, Result, Number1).
 % If we dont make a mill.
 play(Number, Player, Board):-
-  display_board(Board),
-  \+get_legal_place_and_find_mill(Player, Point, Board),
   display_board(Board),
   switch_player_and_play_again_and_reduce_number(Number, Board, Player, Result, Number1).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
