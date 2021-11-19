@@ -56,7 +56,7 @@ other_player(Player_1, Player_2):-
   \+ Player_1 = Player_2.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Checking the pairs.
-pair((Point, Merel), Point, Merel).
+pair((Point, Merel), Point, Merel):-
   is_merel(Merel),
   point(Point).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -323,6 +323,7 @@ get_legal_move_and_change(Player, OldPoint, NewPoint, Board, Board3):-
   delete(Board, (OldPoint, Player), Board2),
   append(Board2, [(NewPoint, Player)], Board3).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% code for section 3.6
 % First possibility: All the merels have been placed, the board represents a
 % winning state, and we have to report the winner. Then we are finished.
 /*play(0, Player, Board):-
@@ -334,6 +335,8 @@ get_legal_move_and_change(Player, OldPoint, NewPoint, Board, Board3):-
 % switch players and then play again, with the updated board and the new player.
 play(0, Player, Board):-
   get_legal_move_and_change(Player, OldPoint, NewPoint, Board, Board2),
+% DeleteOrNot is here because we want find-mill always be true so we can
+% countinue play but say to remove predicate to not remove anything
   find_mill(NewPoint, Board2, Player, DeleteOrNot),
   get_remove_point_and_report_remove(Player, Board2, Board3, DeleteOrNot),
   display_board(Board3),
@@ -349,13 +352,105 @@ play(Number, Player, Board):-
   get_legal_place(Player, Point, Board),
   append(Board, [(Point, Player)], Board2),
   Number1 is Number-1,
-DeleteOrNot is here because we want find-mill always be true so we can
-countinue play but say to remove predicate to not remove anything
+% DeleteOrNot is here because we want find-mill always be true so we can
+% countinue play but say to remove predicate to not remove anything
   find_mill(Point, Board2, Player, DeleteOrNot),
   get_remove_point_and_report_remove(Player, Board2, Board3, DeleteOrNot),
   display_board(Board3),
   other_player(Player, Other),
-  play(Number1, Other, Board3).
+  play(Number1, Other, Board3).*/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Running a game for 1 human and the computer (20%)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% dumbly choose a point (from the assignment)
+choose_place(_Player, Point, Board) :-
+  connected(Point, _),
+  empty_point(Point, Board).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% dumbly choose a removal (from the assignment)
+choose_remove(Player, Point, Board):-
+  pair(Pair, Point, Player),
+  merel_on_board(Pair, Board).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DeleteOrNot for specify that is deleting possible or not.
+choose_remove_and_report_remove(Player, Board, Board2, yes):-
+  choose_remove(Player, Point, Board),
+  other_player(Player, Other),
+  delete(Board, (Point, Other), Board2),
+  report_remove(Player, Point).
+choose_remove_and_report_remove(Player, Board, Board2, no):-
+  Board2 = Board.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% dumbly choose a move (from the assignment)
+choose_move( Player, OldPoint, NewPoint, Board ) :-
+  pair(Pair, OldPoint, Player),
+  merel_on_board( Pair, Board ),
+  connected(OldPoint, NewPoint),
+  empty_point(NewPoint, Board).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% First possibility: All the merels have been placed, the board represents a
+% winning state, and we have to report the winner. Then we are finished.
+play(0, Player, Board):-
+  and_the_winner_is(Board, Player).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Third possibility, a: Player 1 is current, we can get a (legal) move/placement
+% , fill the square, display the board, and play again, with the new board and
+% with player 2 as current player (this is almost exactly like the original
+% play/3 above).
+play(0, y, Board):-
+  get_legal_move_and_change(y, OldPoint, NewPoint, Board, Board2),
+  find_mill(NewPoint, Board2, y, DeleteOrNot),
+  get_remove_point_and_report_remove(y, Board2, Board3, DeleteOrNot),
+  display_board(Board3),
+  play(0, z, Board3).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Third possibility, b: Player 2 is current, we can choose a move/placement
+% (see below), we tell the user what move or placement we have made (see msc
+% /merels/io library), we can fill the square, display the board, and play
+% again, with the new board and with Player 1 current.
+play(0, z, Board):-
+  choose_move(z, OldPoint, NewPoint, Board),
+  delete(Board, (OldPoint, z), Board2),
+  append(Board2, [(NewPoint, z)], Board3),
+% DeleteOrNot is here because we want find-mill always be true so we can
+% countinue play but say to remove predicate to not remove anything
+  find_mill(NewPoint, Board3, z, DeleteOrNot),
+  choose_remove_and_report_remove(z, Board3, Board4, DeleteOrNot),
+  display_board(Board4),
+  play(0, y, Board4).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Second possibility, a: Player 1 is current, we can get a (legal) move/placement
+% , fill the square, display the board, and play again, with the new board and
+% with player 2 as current player (this is almost exactly like the original
+% play/3 above).
+play(Number, y, Board):-
+  get_legal_place(y, Point, Board),
+  append(Board, [(Point, y)], Board2),
+  Number1 is Number-1,
+% DeleteOrNot is here because we want find-mill always be true so we can
+% countinue play but say to remove predicate to not remove anything
+  find_mill(Point, Board2, y, DeleteOrNot),
+  get_remove_point_and_report_remove(y, Board2, Board3, DeleteOrNot),
+  display_board(Board3),
+  play(Number1, z, Board3).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Second possibility, b: Player 2 is current, we can choose a move/placement
+% (see below), we tell the user what move or placement we have made (see msc
+% /merels/io library), we can fill the square, display the board, and play
+% again, with the new board and with Player 1 current.
+play(Number, z, Board):-
+  choose_place(z, Point, Board),
+  report_move(z, Point),
+  append(Board, [(Point, z)], Board2),
+  Number1 is Number-1,
+% DeleteOrNot is here because we want find-mill always be true so we can
+% countinue play but say to remove predicate to not remove anything
+  find_mill(Point, Board2, z, DeleteOrNot),
+  choose_remove_and_report_remove(z, Board2, Board3, DeleteOrNot),
+  display_board(Board3),
+  play(Number1, y, Board3).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Running the game
 play :-
@@ -363,14 +458,5 @@ play :-
   initial_board(Board),
   display_board(Board),
   is_player1(Player),
-  play(6, Player, []).*/
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Running a game for 1 human and the computer (20%)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% First possibility: All the merels have been placed, the board represents a
-% winning state, and we have to report the winner. Then we are finished.
-play(0, Player, Board):-
-  and_the_winner_is(Board, Player).
+  play(6, Player, []).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
