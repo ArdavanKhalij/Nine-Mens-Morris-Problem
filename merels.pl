@@ -57,8 +57,8 @@ other_player(Player_1, Player_2):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Checking the pairs.
 pair((Point, Merel), Point, Merel).
-%   is_merel(Merel),
-%   point(Point).
+  is_merel(Merel),
+  point(Point).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Merel, point and positions.
 merel_on_board((Point, Merel), Board):-
@@ -334,7 +334,6 @@ play(0, Player, Board):-
 % switch players and then play again, with the updated board and the new player.
 play(0, Player, Board):-
   get_legal_move_and_change(Player, OldPoint, NewPoint, Board, Board2),
-  display_board(Board2),
   find_mill(NewPoint, Board2, Player, DeleteOrNot),
   get_remove_point_and_report_remove(Player, Board2, Board3, DeleteOrNot),
   display_board(Board3),
@@ -350,7 +349,6 @@ play(Number, Player, Board):-
   get_legal_place(Player, Point, Board),
   append(Board, [(Point, Player)], Board2),
   Number1 is Number-1,
-  display_board(Board2),
 % DeleteOrNot is here because we want find-mill always be true so we can
 % countinue play but say to remove predicate to not remove anything
   find_mill(Point, Board2, Player, DeleteOrNot),
