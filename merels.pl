@@ -324,8 +324,8 @@ get_legal_move_and_change(Player, OldPoint, NewPoint, Board, Board3):-
   append(Board2, [(NewPoint, Player)], Board3).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % First possibility: All the merels have been placed, the board represents a
-%  winning state, and we have to report the winner. Then we are finished.
-play(0, Player, Board):-
+% winning state, and we have to report the winner. Then we are finished.
+/*play(0, Player, Board):-
   and_the_winner_is(Board, Player).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Third possibility: All the merels have been placed. We can get a (legal)
@@ -349,8 +349,8 @@ play(Number, Player, Board):-
   get_legal_place(Player, Point, Board),
   append(Board, [(Point, Player)], Board2),
   Number1 is Number-1,
-% DeleteOrNot is here because we want find-mill always be true so we can
-% countinue play but say to remove predicate to not remove anything
+DeleteOrNot is here because we want find-mill always be true so we can
+countinue play but say to remove predicate to not remove anything
   find_mill(Point, Board2, Player, DeleteOrNot),
   get_remove_point_and_report_remove(Player, Board2, Board3, DeleteOrNot),
   display_board(Board3),
@@ -363,4 +363,14 @@ play :-
   initial_board(Board),
   display_board(Board),
   is_player1(Player),
-  play(6, Player, []).
+  play(6, Player, []).*/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Running a game for 1 human and the computer (20%)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% First possibility: All the merels have been placed, the board represents a
+% winning state, and we have to report the winner. Then we are finished.
+play(0, Player, Board):-
+  and_the_winner_is(Board, Player).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
