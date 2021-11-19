@@ -2,7 +2,7 @@
 % Adding the libraries.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 :- use_module([library(lists), io]).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Board presentation (15%)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,11 +50,15 @@ other_player(Player_1, Player_2):-
   is_player1(Player_1),
   is_player2(Player_2),
   \+ Player_1 = Player_2.
+other_player(Player_1, Player_2):-
+  is_player2(Player_1),
+  is_player1(Player_2),
+  \+ Player_1 = Player_2.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Checking the pairs.
-pair((Point, Merel), Point, Merel):-
-  point(Point),
-  is_merel(Merel).
+pair((Point, Merel), Point, Merel).
+%   is_merel(Merel),
+%   point(Point).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Merel, point and positions.
 merel_on_board((Point, Merel), Board):-
@@ -177,138 +181,71 @@ possible_move(Merel, Point1, Point2, Board):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % First way to lose (No available move).
 and_the_winner_is(Board, Player):-
-  is_player1(Player),
-  \+possible_move(z, a, b, Board),
-  \+possible_move(z, b, a, Board),
-  \+possible_move(z, b, c, Board),
-  \+possible_move(z, c, b, Board),
-  \+possible_move(z, d, e, Board),
-  \+possible_move(z, e, d, Board),
-  \+possible_move(z, e, f, Board),
-  \+possible_move(z, f, e, Board),
-  \+possible_move(z, g, h, Board),
-  \+possible_move(z, h, g, Board),
-  \+possible_move(z, h, i, Board),
-  \+possible_move(z, i, h, Board),
-  \+possible_move(z, j, k, Board),
-  \+possible_move(z, k, j, Board),
-  \+possible_move(z, k, l, Board),
-  \+possible_move(z, l, k, Board),
-  \+possible_move(z, m, n, Board),
-  \+possible_move(z, n, m, Board),
-  \+possible_move(z, n, o, Board),
-  \+possible_move(z, o, n, Board),
-  \+possible_move(z, p, q, Board),
-  \+possible_move(z, q, p, Board),
-  \+possible_move(z, q, r, Board),
-  \+possible_move(z, r, q, Board),
-  \+possible_move(z, s, t, Board),
-  \+possible_move(z, t, s, Board),
-  \+possible_move(z, t, u, Board),
-  \+possible_move(z, u, t, Board),
-  \+possible_move(z, v, w, Board),
-  \+possible_move(z, w, v, Board),
-  \+possible_move(z, w, x, Board),
-  \+possible_move(z, x, w, Board),
-  \+possible_move(z, a, j, Board),
-  \+possible_move(z, j, a, Board),
-  \+possible_move(z, j, v, Board),
-  \+possible_move(z, v, j, Board),
-  \+possible_move(z, d, k, Board),
-  \+possible_move(z, k, d, Board),
-  \+possible_move(z, k, s, Board),
-  \+possible_move(z, s, k, Board),
-  \+possible_move(z, g, l, Board),
-  \+possible_move(z, l, g, Board),
-  \+possible_move(z, l, p, Board),
-  \+possible_move(z, p, l, Board),
-  \+possible_move(z, b, e, Board),
-  \+possible_move(z, e, b, Board),
-  \+possible_move(z, e, h, Board),
-  \+possible_move(z, h, e, Board),
-  \+possible_move(z, q, t, Board),
-  \+possible_move(z, t, q, Board),
-  \+possible_move(z, t, w, Board),
-  \+possible_move(z, w, t, Board),
-  \+possible_move(z, i, m, Board),
-  \+possible_move(z, m, i, Board),
-  \+possible_move(z, m, r, Board),
-  \+possible_move(z, r, m, Board),
-  \+possible_move(z, f, n, Board),
-  \+possible_move(z, n, f, Board),
-  \+possible_move(z, n, u, Board),
-  \+possible_move(z, u, n, Board),
-  \+possible_move(z, c, o, Board),
-  \+possible_move(z, o, c, Board),
-  \+possible_move(z, o, x, Board),
-  \+possible_move(z, x, o, Board),
-  report_winner(Player).
-and_the_winner_is(Board, Player):-
-  is_player2(Player),
-  \+possible_move(y, a, b, Board),
-  \+possible_move(y, b, a, Board),
-  \+possible_move(y, b, c, Board),
-  \+possible_move(y, c, b, Board),
-  \+possible_move(y, d, e, Board),
-  \+possible_move(y, e, d, Board),
-  \+possible_move(y, e, f, Board),
-  \+possible_move(y, f, e, Board),
-  \+possible_move(y, g, h, Board),
-  \+possible_move(y, h, g, Board),
-  \+possible_move(y, h, i, Board),
-  \+possible_move(y, i, h, Board),
-  \+possible_move(y, j, k, Board),
-  \+possible_move(y, k, j, Board),
-  \+possible_move(y, k, l, Board),
-  \+possible_move(y, l, k, Board),
-  \+possible_move(y, m, n, Board),
-  \+possible_move(y, n, m, Board),
-  \+possible_move(y, n, o, Board),
-  \+possible_move(y, o, n, Board),
-  \+possible_move(y, p, q, Board),
-  \+possible_move(y, q, p, Board),
-  \+possible_move(y, q, r, Board),
-  \+possible_move(y, r, q, Board),
-  \+possible_move(y, s, t, Board),
-  \+possible_move(y, t, s, Board),
-  \+possible_move(y, t, u, Board),
-  \+possible_move(y, u, t, Board),
-  \+possible_move(y, v, w, Board),
-  \+possible_move(y, w, v, Board),
-  \+possible_move(y, w, x, Board),
-  \+possible_move(y, x, w, Board),
-  \+possible_move(y, a, j, Board),
-  \+possible_move(y, j, a, Board),
-  \+possible_move(y, j, v, Board),
-  \+possible_move(y, v, j, Board),
-  \+possible_move(y, d, k, Board),
-  \+possible_move(y, k, d, Board),
-  \+possible_move(y, k, s, Board),
-  \+possible_move(y, s, k, Board),
-  \+possible_move(y, g, l, Board),
-  \+possible_move(y, l, g, Board),
-  \+possible_move(y, l, p, Board),
-  \+possible_move(y, p, l, Board),
-  \+possible_move(y, b, e, Board),
-  \+possible_move(y, e, b, Board),
-  \+possible_move(y, e, h, Board),
-  \+possible_move(y, h, e, Board),
-  \+possible_move(y, q, t, Board),
-  \+possible_move(y, t, q, Board),
-  \+possible_move(y, t, w, Board),
-  \+possible_move(y, w, t, Board),
-  \+possible_move(y, i, m, Board),
-  \+possible_move(y, m, i, Board),
-  \+possible_move(y, m, r, Board),
-  \+possible_move(y, r, m, Board),
-  \+possible_move(y, f, n, Board),
-  \+possible_move(y, n, f, Board),
-  \+possible_move(y, n, u, Board),
-  \+possible_move(y, u, n, Board),
-  \+possible_move(y, c, o, Board),
-  \+possible_move(y, o, c, Board),
-  \+possible_move(y, o, x, Board),
-  \+possible_move(y, x, o, Board),
+  other_player(Player, Other),
+  \+possible_move(Other, a, b, Board),
+  \+possible_move(Other, b, a, Board),
+  \+possible_move(Other, b, c, Board),
+  \+possible_move(Other, c, b, Board),
+  \+possible_move(Other, d, e, Board),
+  \+possible_move(Other, e, d, Board),
+  \+possible_move(Other, e, f, Board),
+  \+possible_move(Other, f, e, Board),
+  \+possible_move(Other, g, h, Board),
+  \+possible_move(Other, h, g, Board),
+  \+possible_move(Other, h, i, Board),
+  \+possible_move(Other, i, h, Board),
+  \+possible_move(Other, j, k, Board),
+  \+possible_move(Other, k, j, Board),
+  \+possible_move(Other, k, l, Board),
+  \+possible_move(Other, l, k, Board),
+  \+possible_move(Other, m, n, Board),
+  \+possible_move(Other, n, m, Board),
+  \+possible_move(Other, n, o, Board),
+  \+possible_move(Other, o, n, Board),
+  \+possible_move(Other, p, q, Board),
+  \+possible_move(Other, q, p, Board),
+  \+possible_move(Other, q, r, Board),
+  \+possible_move(Other, r, q, Board),
+  \+possible_move(Other, s, t, Board),
+  \+possible_move(Other, t, s, Board),
+  \+possible_move(Other, t, u, Board),
+  \+possible_move(Other, u, t, Board),
+  \+possible_move(Other, v, w, Board),
+  \+possible_move(Other, w, v, Board),
+  \+possible_move(Other, w, x, Board),
+  \+possible_move(Other, x, w, Board),
+  \+possible_move(Other, a, j, Board),
+  \+possible_move(Other, j, a, Board),
+  \+possible_move(Other, j, v, Board),
+  \+possible_move(Other, v, j, Board),
+  \+possible_move(Other, d, k, Board),
+  \+possible_move(Other, k, d, Board),
+  \+possible_move(Other, k, s, Board),
+  \+possible_move(Other, s, k, Board),
+  \+possible_move(Other, g, l, Board),
+  \+possible_move(Other, l, g, Board),
+  \+possible_move(Other, l, p, Board),
+  \+possible_move(Other, p, l, Board),
+  \+possible_move(Other, b, e, Board),
+  \+possible_move(Other, e, b, Board),
+  \+possible_move(Other, e, h, Board),
+  \+possible_move(Other, h, e, Board),
+  \+possible_move(Other, q, t, Board),
+  \+possible_move(Other, t, q, Board),
+  \+possible_move(Other, t, w, Board),
+  \+possible_move(Other, w, t, Board),
+  \+possible_move(Other, i, m, Board),
+  \+possible_move(Other, m, i, Board),
+  \+possible_move(Other, m, r, Board),
+  \+possible_move(Other, r, m, Board),
+  \+possible_move(Other, f, n, Board),
+  \+possible_move(Other, n, f, Board),
+  \+possible_move(Other, n, u, Board),
+  \+possible_move(Other, u, n, Board),
+  \+possible_move(Other, c, o, Board),
+  \+possible_move(Other, o, c, Board),
+  \+possible_move(Other, o, x, Board),
+  \+possible_move(Other, x, o, Board),
   report_winner(Player).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Second way to lose (only two merels left).
@@ -355,58 +292,36 @@ mill(Node1, Node2, Node3, Player, Board):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % A predicate that finds out 3 merels are in a row (3 possible ways because we
 % only have 1 node of three needed nodes).
-find_mill(Node, Board, Player):-
+find_mill(Node, Board, Player, DeleteOrNot):-
+  DeleteOrNot = yes,
   merel_on_board((Node, Player), Board),
   mill(Node, _, _, Player, Board).
-find_mill(Node, Board, Player):-
+find_mill(Node, Board, Player, DeleteOrNot):-
+  DeleteOrNot = yes,
   merel_on_board((Node, Player), Board),
   mill(_, Node, _, Player, Board).
-find_mill(Node, Board, Player):-
+find_mill(Node, Board, Player, DeleteOrNot):-
+  DeleteOrNot = yes,
   merel_on_board((Node, Player), Board),
   mill(_, _, Node, Player, Board).
+find_mill(Node, Board, Player, DeleteOrNot):-
+    DeleteOrNot = no.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Mixing two predicates for using Point in both.
-get_legal_place_and_find_mill(Player, Point, Board, Board2):-
-  get_legal_place(Player, Point, Board),
-  append(Board, [(Point, Player)], Board2),
-  find_mill(Point, Board2, Player).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Mixing two predicates for using Point in both.
-get_legal_move_and_find_mill(Player, OldPoint, NewPoint, Board):-
-  get_legal_move(Player, OldPoint, NewPoint, Board),
-  find_mill(NewPoint, Board, Player).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Mixing two predicates for using Point in both.
-get_remove_point_and_report_remove(Player, Point, Board):-
+% DeleteOrNot for specify that is deleting possible or not.
+get_remove_point_and_report_remove(Player, Board, Board2, yes):-
   get_remove_point(Player, Point, Board),
+  other_player(Player, Other),
+  delete(Board, (Point, Other), Board2),
   report_remove(Player, Point).
+get_remove_point_and_report_remove(Player, Board, Board2, no):-
+  Board2 = Board.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Switch to other player
-switch_player(y, z).%:-
-  % Player = y,
-  % Result is z.
-switch_player(z, y).%:-
-  % Player = z,
-  % Result is y.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Mixing two predicates for using Result in both.
-switch_player_and_play_again(Board, Player, Result):-
-  switch_player(Player, Result),
-  play(0, Result, Board).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Mixing two predicates for using Number1 and Result in both.
-switch_player_and_play_again_and_reduce_number(Number, Board, Player, Result, Number1):-
-  Number1 is Number-1,
-  switch_player(Player, Result),
-  play(Number1, Result, Board).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Put all the predicats of second possibility of play/3 in a predicate to have
-% access to board2.
-all_the_predicats_in_play_second_possibility(Number, Player, Board, Board2):-
-  get_legal_place_and_find_mill(Player, Point, Board, Board2),
-  get_remove_point_and_report_remove(Player, Point, Board2),
-  display_board(Board2),
-  switch_player_and_play_again_and_reduce_number(Number, Board2, Player, Result, Number1).
+% having a predicate and put these predicates together for having easier access
+% to them.
+get_legal_move_and_change(Player, OldPoint, NewPoint, Board, Board3):-
+  get_legal_move(Player, OldPoint, NewPoint, Board),
+  delete(Board, (OldPoint, Player), Board2),
+  append(Board2, [(NewPoint, Player)], Board3).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % First possibility: All the merels have been placed, the board represents a
 %  winning state, and we have to report the winner. Then we are finished.
@@ -417,31 +332,32 @@ play(0, Player, Board):-
 % move from the player named in argument 1, move the merel he or she gives,
 % check for any new mills, and ask which piece to remove if so, display the board,
 % switch players and then play again, with the updated board and the new player.
-% !!!!!!!!!!!!!!!!!!
-% If we make a mill.
 play(0, Player, Board):-
-  get_legal_move_and_find_mill(Player, OldPoint, NewPoint, Board),
-  get_remove_point_and_report_remove(Player, Point, Board),
-  display_board(Board),
-  switch_player_and_play_again(Board, Player, Result).
-% If we dont make a mill.
-play(0, Player, Board):-
-  display_board(Board),
-  switch_player_and_play_again(Board, Player, Result).
+  get_legal_move_and_change(Player, OldPoint, NewPoint, Board, Board2),
+  display_board(Board2),
+  find_mill(NewPoint, Board2, Player, DeleteOrNot),
+  get_remove_point_and_report_remove(Player, Board2, Board3, DeleteOrNot),
+  display_board(Board3),
+  other_player(Player, Other),
+  play(0, Other, Board3).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Second possibility: Not all the merels have been placed. We can get a (legal)
 % placing from the player named in argument 1, fill the point he or she gives,
 % check for any new mills, and ask which piece to remove if so, display the
 % board, switch players and then play again, with the updated board and the
 % new player.
-% !!!!!!!!!!!!!!!!!!
-% If we make a mill.
 play(Number, Player, Board):-
-  all_the_predicats_in_play_second_possibility(Number, Player, Board, Board2).
-% % If we dont make a mill.
-% play(Number, Player, Board):-
-%   display_board(Board),
-%   switch_player_and_play_again_and_reduce_number(Number, Board, Player, Result, Number1).
+  get_legal_place(Player, Point, Board),
+  append(Board, [(Point, Player)], Board2),
+  Number1 is Number-1,
+  display_board(Board2),
+% DeleteOrNot is here because we want find-mill always be true so we can
+% countinue play but say to remove predicate to not remove anything
+  find_mill(Point, Board2, Player, DeleteOrNot),
+  get_remove_point_and_report_remove(Player, Board2, Board3, DeleteOrNot),
+  display_board(Board3),
+  other_player(Player, Other),
+  play(Number1, Other, Board3).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Running the game
 play :-
@@ -449,4 +365,4 @@ play :-
   initial_board(Board),
   display_board(Board),
   is_player1(Player),
-  play(6, Player, Board).
+  play(6, Player, []).
