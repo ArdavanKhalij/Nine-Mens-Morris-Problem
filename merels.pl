@@ -172,7 +172,8 @@ initial_board([]).
 possible_move(Merel, Point1, Point2, Board):-
   merel_on_board((Point1, Merel), Board),
   connected(Point1, Point2),
-  is_empty(Point2, Board).
+  \+member((Point2, z), Board),
+  \+member((Point2, y), Board).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % First way to lose (No available move).
 and_the_winner_is(Board, Player):-
@@ -318,7 +319,7 @@ count_all_merels_of_a_player([(_,Merel)|Tail],Merel,Number):-
   Number is Number1+1.
 count_all_merels_of_a_player([(_,Merel1)|Tail],Merel,Number1):-
   Merel1\=Merel,
-  count_all_merels_of_a_player(Tail,MerelX,Number1).
+  count_all_merels_of_a_player(Tail,Merel,Number1).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Check if Number of merels is what we want for a loser palyer (2).
 is_it_a_loser1(Board, Number, N):-
@@ -335,7 +336,7 @@ and_the_winner_is(Board, Player):-
   report_winner(Player).
 and_the_winner_is(Board, Player):-
   is_player2(Player),
-  is_it_a_loser2(Board, 2, Number).
+  is_it_a_loser2(Board, 2, Number),
   report_winner(Player).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -356,14 +357,19 @@ mill(Node1, Node2, Node3, Player, Board):-
 % only have 1 node of three needed nodes).
 find_mill(Node, Board, Player):-
   merel_on_board((Node, Player), Board),
-  mill(Node, _, _, Player, Board),
-  mill(_, Node, _, Player, Board),
+  mill(Node, _, _, Player, Board).
+find_mill(Node, Board, Player):-
+  merel_on_board((Node, Player), Board),
+  mill(_, Node, _, Player, Board).
+find_mill(Node, Board, Player):-
+  merel_on_board((Node, Player), Board),
   mill(_, _, Node, Player, Board).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Mixing two predicates for using Point in both.
-get_legal_place_and_find_mill(Player, Point, Board):-
+get_legal_place_and_find_mill(Player, Point, Board, Board2):-
   get_legal_place(Player, Point, Board),
-  find_mill(Point, Board, Player).
+  append(Board, [(Point, Player)], Board2),
+  find_mill(Point, Board2, Player).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Mixing two predicates for using Point in both.
 get_legal_move_and_find_mill(Player, OldPoint, NewPoint, Board):-
@@ -376,12 +382,12 @@ get_remove_point_and_report_remove(Player, Point, Board):-
   report_remove(Player, Point).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Switch to other player
-switch_player(Player, Result):-
-  Player = y,
-  Result is z.
-switch_player(Player, Result):-
-  Player = z,
-  Result is y.
+switch_player(y, z).%:-
+  % Player = y,
+  % Result is z.
+switch_player(z, y).%:-
+  % Player = z,
+  % Result is y.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Mixing two predicates for using Result in both.
 switch_player_and_play_again(Board, Player, Result):-
@@ -393,6 +399,14 @@ switch_player_and_play_again_and_reduce_number(Number, Board, Player, Result, Nu
   Number1 is Number-1,
   switch_player(Player, Result),
   play(Number1, Result, Board).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Put all the predicats of second possibility of play/3 in a predicate to have
+% access to board2.
+all_the_predicats_in_play_second_possibility(Number, Player, Board, Board2):-
+  get_legal_place_and_find_mill(Player, Point, Board, Board2),
+  get_remove_point_and_report_remove(Player, Point, Board2),
+  display_board(Board2),
+  switch_player_and_play_again_and_reduce_number(Number, Board2, Player, Result, Number1).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % First possibility: All the merels have been placed, the board represents a
 %  winning state, and we have to report the winner. Then we are finished.
@@ -423,14 +437,11 @@ play(0, Player, Board):-
 % !!!!!!!!!!!!!!!!!!
 % If we make a mill.
 play(Number, Player, Board):-
-  get_legal_place_and_find_mill(Player, Point, Board),
-  get_remove_point_and_report_remove(Player, Point, Board),
-  display_board(Board),
-  switch_player_and_play_again_and_reduce_number(Number, Board, Player, Result, Number1).
-% If we dont make a mill.
-play(Number, Player, Board):-
-  display_board(Board),
-  switch_player_and_play_again_and_reduce_number(Number, Board, Player, Result, Number1).
+  all_the_predicats_in_play_second_possibility(Number, Player, Board, Board2).
+% % If we dont make a mill.
+% play(Number, Player, Board):-
+%   display_board(Board),
+%   switch_player_and_play_again_and_reduce_number(Number, Board, Player, Result, Number1).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Running the game
 play :-
@@ -438,4 +449,4 @@ play :-
   initial_board(Board),
   display_board(Board),
   is_player1(Player),
-  play(18, Player, Board).
+  play(6, Player, Board).
