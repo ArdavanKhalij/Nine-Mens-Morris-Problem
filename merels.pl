@@ -458,12 +458,24 @@ choose_move( Player, OldPoint, NewPoint, Board ) :-
     connected(OldPoint, NewPoint),
     empty_point(NewPoint, Board).*/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Second kind of heuristics (Not totally dumbly). Searching until finding the 
+% Second kind of heuristics (Not totally dumbly). Searching until finding the
 % suitable situation.
 % Choose a point.
-choose_place(_Player, Point, Board) :-
+choose_place(_Player, Point, Board):-
+    findall(X, point(X), Points),
+    find_an_empty_node(Board, Points, Point),
     connected(Point, _),
     empty_point(Point, Board).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Find the first empty position.
+find_an_empty_node(Board, [Points_Head|Points_Tail], Legal_Point):-
+    member((Points_Head, y), Board),
+    find_an_empty_node(Board, Points_Tail, Legal_Point).
+find_an_empty_node(Board, [Points_Head|Points_Tail], Legal_Point):-
+    member((Points_Head, z), Board),
+    find_an_empty_node(Board, Points_Tail, Legal_Point).
+find_an_empty_node(Board, [Points_Head|Points_Tail], Legal_Point):-
+    Legal_Point = Points_Head.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Choose a removal.
 choose_remove(Player, Point, Board):-
@@ -471,9 +483,9 @@ choose_remove(Player, Point, Board):-
     merel_on_board(Pair, Board).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Choose a move.
-choose_move( Player, OldPoint, NewPoint, Board ) :-
+choose_move(Player, OldPoint, NewPoint, Board):-
     pair(Pair, OldPoint, Player),
-    merel_on_board( Pair, Board ),
+    merel_on_board(Pair, Board),
     connected(OldPoint, NewPoint),
     empty_point(NewPoint, Board).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
