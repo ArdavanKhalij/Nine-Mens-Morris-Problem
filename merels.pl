@@ -14,29 +14,35 @@ is_player1(y).
 is_player2(z).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Adding points as facts.
-point(a).
-point(b).
-point(c).
-point(d).
+% First priority points (4 connections) (If you dont know what I mean, please check the
+% Description part at the end of the code)
 point(e).
-point(f).
-point(g).
-point(h).
-point(i).
-point(j).
 point(k).
+point(t).
+point(n).
+% Second priority points (3 connections) (If you dont know what I mean, please check the
+% Description part at the end of the code)
+point(b).
+point(j).
+point(o).
+point(w).
+point(h).
 point(l).
 point(m).
-point(n).
-point(o).
-point(p).
 point(q).
+% Third priority points (2 connections) (If you dont know what I mean, please check the
+% Description part at the end of the code)
+point(a).
+point(c).
+point(d).
+point(f).
+point(g).
+point(i).
+point(p).
 point(r).
 point(s).
-point(t).
 point(u).
 point(v).
-point(w).
 point(x).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Check the players name.
@@ -613,6 +619,8 @@ find_an_empty_node(Board, [Points_Head|Points_Tail], Legal_Point):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Returns true if Node1, Node2 and Node3 are full with merels of one player and
 % also if they are in a row.
+% the order here is super important and I give it priority for some acts for
+% example potential mills with one missing merel has the highest priority.
 % potential mills with one missing merel.
 potential_mill(Node1, Node2, Node3, Player, Board):-
     row(Node1, Node2, Node3),
@@ -809,4 +817,52 @@ play :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % End of the program.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Some explanation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/*
+After designing it so that two humans could play it, I wrote three different
+levels of heuristics in this program.
+The first type was precisely the same as you mentioned in the description in
+the last part. After that, I commented on that part of the code and started
+the second level of smartness of the heuristics.
+The second heuristics are chosen based on what they see first. So they choose,
+remove, and move the first possible merel.
+The third heuristics are based on the explanation at the end of part two of the
+assignment. So I will explain here that what did I do for each strategy in the
+third heuristics.
+
+1. If there is a mill to be made, make it; if opponent is able to make a mill,
+remove one of the relevant pieces: I did this part with find_an_empty_node_
+in_a_mill and potential_mill, predicates, and also making the choose_place
+to two parts for making a XOR.
+
+2. If opponent is about to make a mill, block it if possible: I did this part
+by only adding other options to potential_mill predicates. These options check
+if there is a potential mill for the opponent to and also, the order of these
+options is essential here because it shows their priority.
+
+3. Place pieces on points with many connections, where possible: We can do this
+part by giving priority to the positions. In my predicates for choosing an empty
+place, I used the findall predicate. As you know findall get together all the
+points because I wrote these predicates as well:
+point(a).
+point(b).
+.
+.
+.
+So I can get a list of the nodes. And also, the list's order is based on the
+order of the point predicates, so simply, by changing the order of the point
+predicates, we can make the program check the higher priority nodes (nodes with
+more connections) sooner.
+
+4. Otherwise, move your pieces together: I should mention that instead of
+moving pieces together, I decided to do something different. I prioritize
+potential mills that only have one node fill with merel, so automatically,
+the merels become closer together. Of course, this is not precisely the same,
+but I think it works well or even better than just moving the pieces together.
+*/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
