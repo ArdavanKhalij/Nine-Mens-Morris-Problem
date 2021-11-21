@@ -467,7 +467,8 @@ choose_place(_Player, Point, Board):-
     connected(Point, _),
     empty_point(Point, Board).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Find the first empty position.
+% Find the first empty position (in order of a - x) and it should always
+% succseed because we have 24, positions and 18 merels.
 find_an_empty_node(Board, [Points_Head|Points_Tail], Legal_Point):-
     member((Points_Head, y), Board),
     find_an_empty_node(Board, Points_Tail, Legal_Point).
@@ -479,15 +480,54 @@ find_an_empty_node(Board, [Points_Head|Points_Tail], Legal_Point):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Choose a removal.
 choose_remove(Player, Point, Board):-
+    % findall(X, point(X), Points),
     pair(Pair, Point, Player),
     merel_on_board(Pair, Board).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Choose a move.
 choose_move(Player, OldPoint, NewPoint, Board):-
-    pair(Pair, OldPoint, Player),
-    merel_on_board(Pair, Board),
-    connected(OldPoint, NewPoint),
-    empty_point(NewPoint, Board).
+    findall(X, point(X), Points),
+    find_a_merel(Board, OldPoint, NewPoint, Points).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Fist finding a position that has a z, merel on it, and then try to find a free
+% connection for moving that merel (NewPoint). return false if it cant.
+find_a_merel(Board, OldPoint, NewPoint, [Points_Head|Points_Tail]):-
+    merel_on_board((Points_Head, z), Board),
+    findall(X, point(X), Pionts),
+    does_it_have_a_free_connection(Board, Pionts, Points_Head, Free_connection),
+    OldPoint = Points_Head,
+    NewPoint = Free_connection.
+find_a_merel(Board, OldPoint, NewPoint, [Points_Head|Points_Tail]):-
+    \+merel_on_board((Points_Head, z), Board),
+    find_a_merel(Board, OldPoint, NewPoint, Points_Tail).
+find_a_merel(Board, OldPoint, NewPoint, [Points_Head|Points_Tail]):-
+    findall(X, point(X), Pionts),
+    \+does_it_have_a_free_connection(Board, Pionts, Points_Head, Free_connection),
+    find_a_merel(Board, OldPoint, NewPoint, Points_Tail).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% succseed when can find a free connection and returns false if it cant.
+does_it_have_a_free_connection(Board, [Points_Head|Points_Tail], Point, Free_connection):-
+    merel_on_board((Point, z), Board),
+    \+connected(Point, Points_Head),
+    does_it_have_a_free_connection(Board, Points_Tail, Point, Free_connection).
+does_it_have_a_free_connection(Board, [Points_Head|Points_Tail], Point, Free_connection):-
+    merel_on_board((Point, z), Board),
+    merel_on_board((Points_Head, z), Board),
+    does_it_have_a_free_connection(Board, Points_Tail, Point, Free_connection).
+does_it_have_a_free_connection(Board, [Points_Head|Points_Tail], Point, Free_connection):-
+    merel_on_board((Point, z), Board),
+    merel_on_board((Points_Head, y), Board),
+    does_it_have_a_free_connection(Board, Points_Tail, Point, Free_connection).
+does_it_have_a_free_connection(Board, [Points_Head|Points_Tail], Point, Free_connection):-
+    merel_on_board((Point, z), Board),
+    Point = Points_Head,
+    does_it_have_a_free_connection(Board, Points_Tail, Point, Free_connection).
+does_it_have_a_free_connection(Board, [Points_Head|Points_Tail], Point, Free_connection):-
+    connected(Point, Points_Head),
+    \+merel_on_board((Points_Head, z), Board),
+    \+merel_on_board((Points_Head, y), Board),
+    Point \= Points_Head,
+    Free_connection = Points_Head.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Running the game
@@ -498,7 +538,7 @@ play :-
     initial_board(Board),
     display_board(Board),
     is_player1(Player),
-    play(6, Player, []).
+    play(18, Player, []).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % End of the program.
