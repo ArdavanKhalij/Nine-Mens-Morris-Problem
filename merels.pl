@@ -635,6 +635,28 @@ potential_mill(Node1, Node2, Node3, Player, Board):-
     merel_on_board((Node2, Player), Board),
     \+merel_on_board((Node3, Other), Board),
     \+merel_on_board((Node3, Player), Board).
+% potential mills with one missing merel of opponent.
+potential_mill(Node1, Node2, Node3, Player, Board):-
+    row(Node1, Node2, Node3),
+    other_player(Player, Other),
+    merel_on_board((Node2, Other), Board),
+    merel_on_board((Node3, Other), Board),
+    \+merel_on_board((Node1, Other), Board),
+    \+merel_on_board((Node1, Player), Board).
+potential_mill(Node1, Node2, Node3, Player, Board):-
+    row(Node1, Node2, Node3),
+    other_player(Player, Other),
+    merel_on_board((Node1, Other), Board),
+    merel_on_board((Node3, Other), Board),
+    \+merel_on_board((Node2, Other), Board),
+    \+merel_on_board((Node2, Player), Board).
+potential_mill(Node1, Node2, Node3, Player, Board):-
+    row(Node1, Node2, Node3),
+    other_player(Player, Other),
+    merel_on_board((Node1, Other), Board),
+    merel_on_board((Node2, Other), Board),
+    \+merel_on_board((Node3, Other), Board),
+    \+merel_on_board((Node3, Player), Board).
 % potential mills with two missing merel.
 potential_mill(Node1, Node2, Node3, Player, Board):-
     row(Node1, Node2, Node3),
@@ -660,6 +682,31 @@ potential_mill(Node1, Node2, Node3, Player, Board):-
     \+merel_on_board((Node2, Player), Board),
     \+merel_on_board((Node2, Other), Board),
     merel_on_board((Node3, Player), Board).
+% potential mills with two missing merel.
+potential_mill(Node1, Node2, Node3, Player, Board):-
+    row(Node1, Node2, Node3),
+    other_player(Player, Other),
+    merel_on_board((Node1, Other), Board),
+    \+merel_on_board((Node2, Player), Board),
+    \+merel_on_board((Node2, Other), Board),
+    \+merel_on_board((Node3, Other), Board),
+    \+merel_on_board((Node3, Player), Board).
+potential_mill(Node1, Node2, Node3, Player, Board):-
+    row(Node1, Node2, Node3),
+    other_player(Player, Other),
+    \+merel_on_board((Node1, Other), Board),
+    \+merel_on_board((Node1, Player), Board),
+    merel_on_board((Node2, Other), Board),
+    \+merel_on_board((Node3, Other), Board),
+    \+merel_on_board((Node3, Player), Board).
+potential_mill(Node1, Node2, Node3, Player, Board):-
+    row(Node1, Node2, Node3),
+    other_player(Player, Other),
+    \+merel_on_board((Node1, Other), Board),
+    \+merel_on_board((Node1, Player), Board),
+    \+merel_on_board((Node2, Player), Board),
+    \+merel_on_board((Node2, Other), Board),
+    merel_on_board((Node3, Other), Board).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % A predicate that finds out 3 merels are in a row (3 possible ways because we
 % only have 1 node of three needed nodes).
