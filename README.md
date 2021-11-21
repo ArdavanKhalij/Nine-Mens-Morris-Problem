@@ -3,17 +3,17 @@
 ## How to play the game
 The modern rules of Merels date from the Middle Ages, though there is evidence that a simpler version of the game existed as long ago as 1400BC. Like many games, the rules are simple, but the emerging possibilities are complex. We start with a board made up of lines connecting points,like this: <br><br>
 a-----b-----c<br>
-|     |     |<br>
-| d---e---f |<br>
-| |   |   | |<br>
-| | g-h-i | |<br>
-| | |   | | |<br>
-j-k-l   m-n-o<br>
-| | |   | | |<br>
-| | p-q-r | |<br>
-| |   |   | |<br>
-| s---t---u |<br>
-|     |     |<br>
+|.....|.....|<br>
+|.d---e---f.|<br>
+|.|...|...|.|<br>
+|.|.g-h-i.|.|<br>
+|.|.|...|.|.|<br>
+j-k-l...m-n-o<br>
+|.|.|...|.|.|<br>
+|.|.p-q-r.|.|<br>
+|.|...|...|.|<br>
+|.s---t---u.|<br>
+|.....|.....|<br>
 v-----w-----x<br><br>
 I have labelled the points with letters for easy reference. Note that you must stick to this labelling, otherwise the supplied library code may not work.
 There are the rules of Merels, taken from Past Times’ compendium of “Cloister Games”:<br><br>
