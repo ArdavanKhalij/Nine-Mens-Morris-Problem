@@ -2,7 +2,7 @@
 ### This is a VUB project for the course declarative programming under supervision of Dr. Geraint Wiggins and Mr. Steven Homer.
 ## How to play the game
 The modern rules of Merels date from the Middle Ages, though there is evidence that a simpler version of the game existed as long ago as 1400BC. Like many games, the rules are simple, but the emerging possibilities are complex. We start with a board made up of lines connecting points,like this: <br><br>
-<img height="100" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/javascript/javascript.png">
+<img height="500" src="https://cdn4.vectorstock.com/i/1000x1000/03/08/nine-mens-morris-board-strategy-game-isolated-vector-23960308.jpg">
 <br><br>
 I have labelled the points with letters for easy reference. Note that you must stick to this labelling, otherwise the supplied library code may not work.
 There are the rules of Merels, taken from Past Times’ compendium of “Cloister Games”:<br><br>
