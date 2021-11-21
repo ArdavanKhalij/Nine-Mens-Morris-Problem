@@ -248,6 +248,16 @@ and_the_winner_is(Board, Player):-
     \+possible_move(Other, x, o, Board),
     report_winner(Player).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Second and_the_winner_is predicate.
+and_the_winner_is(Board, Player):-
+    is_player1(Player),
+    is_it_a_loser1(Board, 2, Number),
+    report_winner(Player).
+and_the_winner_is(Board, Player):-
+    is_player2(Player),
+    is_it_a_loser2(Board, 2, Number),
+    report_winner(Player).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Second way to lose (only two merels left).
 % Counting the number of merels of players for finding the loser
 count_all_merels_of_a_player([], Merel, 0).
@@ -265,16 +275,6 @@ is_it_a_loser1(Board, Number, N):-
 is_it_a_loser2(Board, Number, N):-
     count_all_merels_of_a_player(Board, y, N),
     Number = N.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Second and_the_winner_is predicate.
-and_the_winner_is(Board, Player):-
-    is_player1(Player),
-    is_it_a_loser1(Board, 2, Number),
-    report_winner(Player).
-and_the_winner_is(Board, Player):-
-    is_player2(Player),
-    is_it_a_loser2(Board, 2, Number),
-    report_winner(Player).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Running a game for 2 human players (25%)
@@ -305,7 +305,7 @@ find_mill(Node, Board, Player, DeleteOrNot):-
     merel_on_board((Node, Player), Board),
     mill(_, _, Node, Player, Board).
 find_mill(Node, Board, Player, DeleteOrNot):-
-        DeleteOrNot = no.
+    DeleteOrNot = no.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % DeleteOrNot for specify that is deleting possible or not.
 get_remove_point_and_report_remove(Player, Board, Board2, yes):-
@@ -458,7 +458,7 @@ choose_move( Player, OldPoint, NewPoint, Board ) :-
     connected(OldPoint, NewPoint),
     empty_point(NewPoint, Board).*/
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Second kind of heuristics (Not totally dumbly). Searching until finding the
+% Second kind of heuristics (Not dumbly). Searching until finding the
 % suitable situation.
 % Choose a point.
 choose_place(_Player, Point, Board):-
@@ -468,7 +468,7 @@ choose_place(_Player, Point, Board):-
     empty_point(Point, Board).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Find the first empty position (in order of a - x) and it should always
-% succseed because we have 24, positions and 18 merels.
+% succeed because we have 24, positions and 18 merels.
 find_an_empty_node(Board, [Points_Head|Points_Tail], Legal_Point):-
     member((Points_Head, y), Board),
     find_an_empty_node(Board, Points_Tail, Legal_Point).
@@ -480,9 +480,33 @@ find_an_empty_node(Board, [Points_Head|Points_Tail], Legal_Point):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Choose a removal.
 choose_remove(Player, Point, Board):-
-    % findall(X, point(X), Points),
-    pair(Pair, Point, Player),
-    merel_on_board(Pair, Board).
+    findall(X, point(X), Points),
+    find_a_merel_for_remove(Points, Point, Board).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A predicate that finds out 3 merels are in a row (3 possible ways because we
+% only have 1 node of three needed nodes).
+find_mill_for_computer(Node, Board, Player):-
+    merel_on_board((Node, Player), Board),
+    mill(Node, _, _, Player, Board).
+find_mill_for_computer(Node, Board, Player):-
+    merel_on_board((Node, Player), Board),
+    mill(_, Node, _, Player, Board).
+find_mill_for_computer(Node, Board, Player):-
+    merel_on_board((Node, Player), Board),
+    mill(_, _, Node, Player, Board).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Searching all points and find one that is not in a row and delete it. It
+% always succeed because we dont call it until the time we have a mill.
+find_a_merel_for_remove([Points_Head|Points_Tail], Point, Board):-
+    merel_on_board((Points_Head, y), Board),
+    \+find_mill_for_computer(Points_Head, Board, y),
+    Point = Points_Head.
+find_a_merel_for_remove([Points_Head|Points_Tail], Point, Board):-
+    \+merel_on_board((Points_Head, y), Board),
+    find_a_merel_for_remove(Points_Tail, Point, Board).
+find_a_merel_for_remove([Points_Head|Points_Tail], Point, Board):-
+    find_mill_for_computer(Points_Head, Board, y),
+    find_a_merel_for_remove(Points_Tail, Point, Board).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Choose a move.
 choose_move(Player, OldPoint, NewPoint, Board):-
@@ -505,7 +529,7 @@ find_a_merel(Board, OldPoint, NewPoint, [Points_Head|Points_Tail]):-
     \+does_it_have_a_free_connection(Board, Pionts, Points_Head, Free_connection),
     find_a_merel(Board, OldPoint, NewPoint, Points_Tail).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% succseed when can find a free connection and returns false if it cant.
+% succeed when can find a free connection and returns false if it cant.
 does_it_have_a_free_connection(Board, [Points_Head|Points_Tail], Point, Free_connection):-
     merel_on_board((Point, z), Board),
     \+connected(Point, Points_Head),
@@ -538,7 +562,7 @@ play :-
     initial_board(Board),
     display_board(Board),
     is_player1(Player),
-    play(18, Player, []).
+    play(8, Player, []).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % End of the program.
