@@ -730,6 +730,15 @@ find_a_potential_mill(Node, Board, Player):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Choose a removal.
 choose_remove(Player, Point, Board):-
+    choose_remove1(Player, Point, Board).
+choose_remove(Player, Point, Board):-
+    choose_remove2(Player, Point, Board),
+    \+choose_remove1(Player, Point, Board).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+choose_remove1(Player, Point, Board):-
+    findall(X, point(X), Points),
+    find_a_merel_for_remove_mill(Points, Point, Board).
+choose_remove2(Player, Point, Board):-
     findall(X, point(X), Points),
     find_a_merel_for_remove(Points, Point, Board).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -758,13 +767,50 @@ find_a_merel_for_remove([Points_Head|Points_Tail], Point, Board):-
     find_mill_for_computer(Points_Head, Board, y),
     find_a_merel_for_remove(Points_Tail, Point, Board).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+find_a_merel_for_remove_mill([Points_Head|Points_Tail], Point, Board):-
+    \+merel_on_board((Points_Head, y), Board),
+    find_a_merel_for_remove_mill(Points_Tail, Point, Board).
+find_a_merel_for_remove_mill([Points_Head|Points_Tail], Point, Board):-
+    find_mill_for_computer(Points_Head, Board, y),
+    find_a_merel_for_remove_mill(Points_Tail, Point, Board).
+find_a_merel_for_remove_mill([Points_Head|Points_Tail], Point, Board):-
+    find_a_potential_mill(Points_Head, Board, y),
+    find_a_merel_for_remove_mill(Points_Tail, Point, Board).
+find_a_merel_for_remove_mill([Points_Head|Points_Tail], Point, Board):-
+    merel_on_board((Points_Head, y), Board),
+    \+find_mill_for_computer(Points_Head, Board, y),
+    Point = Points_Head.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Choose a move.
 choose_move(Player, OldPoint, NewPoint, Board):-
+    choose_move1(Player, OldPoint, NewPoint, Board).
+choose_move(Player, OldPoint, NewPoint, Board):-
+    choose_move2(Player, OldPoint, NewPoint, Board),
+    \+choose_move1(Player, OldPoint, NewPoint, Board).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+choose_move1(Player, OldPoint, NewPoint, Board):-
+    findall(X, point(X), Points),
+    find_a_merel_that_has_a_connection_in_mill(Board, OldPoint, NewPoint, Points).
+choose_move2(Player, OldPoint, NewPoint, Board):-
     findall(X, point(X), Points),
     find_a_merel(Board, OldPoint, NewPoint, Points).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Fist finding a position that has a z, merel on it, and then try to find a free
 % connection for moving that merel (NewPoint). return false if it cant.
+find_a_merel_that_has_a_connection_in_mill(Board, OldPoint, NewPoint, [Points_Head|Points_Tail]):-
+    \+merel_on_board((Points_Head, z), Board),
+    find_a_merel_that_has_a_connection_in_mill(Board, OldPoint, NewPoint, Points_Tail).
+find_a_merel_that_has_a_connection_in_mill(Board, OldPoint, NewPoint, [Points_Head|Points_Tail]):-
+    findall(X, point(X), Points),
+    \+does_it_have_a_free_connection_and_mill(Board, Points, Points_Head, Free_connection),
+    find_a_merel_that_has_a_connection_in_mill(Board, OldPoint, NewPoint, Points_Tail).
+find_a_merel_that_has_a_connection_in_mill(Board, OldPoint, NewPoint, [Points_Head|Points_Tail]):-
+    merel_on_board((Points_Head, z), Board),
+    findall(X, point(X), Pionts),
+    does_it_have_a_free_connection_and_mill(Board, Pionts, Points_Head, Free_connection),
+    OldPoint = Points_Head,
+    NewPoint = Free_connection.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 find_a_merel(Board, OldPoint, NewPoint, [Points_Head|Points_Tail]):-
     merel_on_board((Points_Head, z), Board),
     findall(X, point(X), Pionts),
@@ -780,6 +826,34 @@ find_a_merel(Board, OldPoint, NewPoint, [Points_Head|Points_Tail]):-
     find_a_merel(Board, OldPoint, NewPoint, Points_Tail).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % succeed when can find a free connection and returns false if it cant.
+does_it_have_a_free_connection_and_mill(Board, [Points_Head|Points_Tail], Point, Free_connection):-
+    merel_on_board((Point, z), Board),
+    \+connected(Point, Points_Head),
+    does_it_have_a_free_connection_and_mill(Board, Points_Tail, Point, Free_connection).
+does_it_have_a_free_connection_and_mill(Board, [Points_Head|Points_Tail], Point, Free_connection):-
+    merel_on_board((Point, z), Board),
+    merel_on_board((Points_Head, z), Board),
+    does_it_have_a_free_connection_and_mill(Board, Points_Tail, Point, Free_connection).
+does_it_have_a_free_connection_and_mill(Board, [Points_Head|Points_Tail], Point, Free_connection):-
+    merel_on_board((Point, z), Board),
+    merel_on_board((Points_Head, y), Board),
+    does_it_have_a_free_connection_and_mill(Board, Points_Tail, Point, Free_connection).
+does_it_have_a_free_connection_and_mill(Board, [Points_Head|Points_Tail], Point, Free_connection):-
+    merel_on_board((Point, z), Board),
+    Point = Points_Head,
+    does_it_have_a_free_connection_and_mill(Board, Points_Tail, Point, Free_connection).
+does_it_have_a_free_connection_and_mill(Board, [Points_Head|Points_Tail], Point, Free_connection):-
+    merel_on_board((Point, z), Board),
+    Point = Points_Head,
+    \+find_a_potential_mill(Points_Head, Board, z),
+    does_it_have_a_free_connection_and_mill(Board, Points_Tail, Point, Free_connection).
+does_it_have_a_free_connection_and_mill(Board, [Points_Head|Points_Tail], Point, Free_connection):-
+    connected(Point, Points_Head),
+    \+merel_on_board((Points_Head, z), Board),
+    \+merel_on_board((Points_Head, y), Board),
+    Point \= Points_Head,
+    Free_connection = Points_Head.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 does_it_have_a_free_connection(Board, [Points_Head|Points_Tail], Point, Free_connection):-
     merel_on_board((Point, z), Board),
     \+connected(Point, Points_Head),
@@ -812,7 +886,7 @@ play :-
     initial_board(Board),
     display_board(Board),
     is_player1(Player),
-    play(6, Player, []).
+    play(18, Player, []).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % End of the program.
