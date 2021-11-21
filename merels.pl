@@ -461,7 +461,7 @@ choose_move( Player, OldPoint, NewPoint, Board ) :-
 % Second kind of heuristics (Not dumbly). Searching until finding the
 % suitable situation.
 % Choose a point.
-choose_place(_Player, Point, Board):-
+/*choose_place(_Player, Point, Board):-
     findall(X, point(X), Points),
     find_an_empty_node(Board, Points, Point),
     connected(Point, _),
@@ -477,6 +477,191 @@ find_an_empty_node(Board, [Points_Head|Points_Tail], Legal_Point):-
     find_an_empty_node(Board, Points_Tail, Legal_Point).
 find_an_empty_node(Board, [Points_Head|Points_Tail], Legal_Point):-
     Legal_Point = Points_Head.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Choose a removal.
+choose_remove(Player, Point, Board):-
+    findall(X, point(X), Points),
+    find_a_merel_for_remove(Points, Point, Board).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A predicate that finds out 3 merels are in a row (3 possible ways because we
+% only have 1 node of three needed nodes).
+find_mill_for_computer(Node, Board, Player):-
+    merel_on_board((Node, Player), Board),
+    mill(Node, _, _, Player, Board).
+find_mill_for_computer(Node, Board, Player):-
+    merel_on_board((Node, Player), Board),
+    mill(_, Node, _, Player, Board).
+find_mill_for_computer(Node, Board, Player):-
+    merel_on_board((Node, Player), Board),
+    mill(_, _, Node, Player, Board).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Searching all points and find one that is not in a row and delete it. It
+% always succeed because we dont call it until the time we have a mill.
+find_a_merel_for_remove([Points_Head|Points_Tail], Point, Board):-
+    merel_on_board((Points_Head, y), Board),
+    \+find_mill_for_computer(Points_Head, Board, y),
+    Point = Points_Head.
+find_a_merel_for_remove([Points_Head|Points_Tail], Point, Board):-
+    \+merel_on_board((Points_Head, y), Board),
+    find_a_merel_for_remove(Points_Tail, Point, Board).
+find_a_merel_for_remove([Points_Head|Points_Tail], Point, Board):-
+    find_mill_for_computer(Points_Head, Board, y),
+    find_a_merel_for_remove(Points_Tail, Point, Board).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Choose a move.
+choose_move(Player, OldPoint, NewPoint, Board):-
+    findall(X, point(X), Points),1
+    find_a_merel(Board, OldPoint, NewPoint, Points).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Fist finding a position that has a z, merel on it, and then try to find a free
+% connection for moving that merel (NewPoint). return false if it cant.
+find_a_merel(Board, OldPoint, NewPoint, [Points_Head|Points_Tail]):-
+    merel_on_board((Points_Head, z), Board),
+    findall(X, point(X), Pionts),
+    does_it_have_a_free_connection(Board, Pionts, Points_Head, Free_connection),
+    OldPoint = Points_Head,
+    NewPoint = Free_connection.
+find_a_merel(Board, OldPoint, NewPoint, [Points_Head|Points_Tail]):-
+    \+merel_on_board((Points_Head, z), Board),
+    find_a_merel(Board, OldPoint, NewPoint, Points_Tail).
+find_a_merel(Board, OldPoint, NewPoint, [Points_Head|Points_Tail]):-
+    findall(X, point(X), Pionts),
+    \+does_it_have_a_free_connection(Board, Pionts, Points_Head, Free_connection),
+    find_a_merel(Board, OldPoint, NewPoint, Points_Tail).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% succeed when can find a free connection and returns false if it cant.
+does_it_have_a_free_connection(Board, [Points_Head|Points_Tail], Point, Free_connection):-
+    merel_on_board((Point, z), Board),
+    \+connected(Point, Points_Head),
+    does_it_have_a_free_connection(Board, Points_Tail, Point, Free_connection).
+does_it_have_a_free_connection(Board, [Points_Head|Points_Tail], Point, Free_connection):-
+    merel_on_board((Point, z), Board),
+    merel_on_board((Points_Head, z), Board),
+    does_it_have_a_free_connection(Board, Points_Tail, Point, Free_connection).
+does_it_have_a_free_connection(Board, [Points_Head|Points_Tail], Point, Free_connection):-
+    merel_on_board((Point, z), Board),
+    merel_on_board((Points_Head, y), Board),
+    does_it_have_a_free_connection(Board, Points_Tail, Point, Free_connection).
+does_it_have_a_free_connection(Board, [Points_Head|Points_Tail], Point, Free_connection):-
+    merel_on_board((Point, z), Board),
+    Point = Points_Head,
+    does_it_have_a_free_connection(Board, Points_Tail, Point, Free_connection).
+does_it_have_a_free_connection(Board, [Points_Head|Points_Tail], Point, Free_connection):-
+    connected(Point, Points_Head),
+    \+merel_on_board((Points_Head, z), Board),
+    \+merel_on_board((Points_Head, y), Board),
+    Point \= Points_Head,
+    Free_connection = Points_Head.*/
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Third kind of heuristics. Base on the end of section 2
+% Choose a point. We first look for a potential mill, then for any empty node.
+choose_place(_Player, Point, Board):-
+    choose_place1(_Player, Point, Board).
+choose_place(_Player, Point, Board):-
+    \+choose_place1(_Player, Point, Board),
+    choose_place2(_Player, Point, Board).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% choose_place1 for checking mills and choose_place2 is for checking for an
+% empty node and they used in choose_place for making a condition that the
+% program first search for a potential mill and then for a free position.
+choose_place1(_Player, Point, Board):-
+    findall(X, point(X), Points),
+    find_an_empty_node_in_a_mill(Board, Points, Point),
+    connected(Point, _),
+    empty_point(Point, Board).
+choose_place2(_Player, Point, Board):-
+    findall(X, point(X), Points),
+    find_an_empty_node(Board, Points, Point),
+    connected(Point, _),
+    empty_point(Point, Board).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% find an empty node in an one_empty_node_mill or two_empty_node_mill (find a potential mill)
+find_an_empty_node_in_a_mill(Board, [Points_Head|Points_Tail], Legal_Point):-
+    member((Points_Head, y), Board),
+    find_an_empty_node_in_a_mill(Board, Points_Tail, Legal_Point).
+find_an_empty_node_in_a_mill(Board, [Points_Head|Points_Tail], Legal_Point):-
+    member((Points_Head, z), Board),
+    find_an_empty_node_in_a_mill(Board, Points_Tail, Legal_Point).
+find_an_empty_node_in_a_mill(Board, [Points_Head|Points_Tail], Legal_Point):-
+    \+find_a_potential_mill(Points_Head, Board, z),
+    find_an_empty_node_in_a_mill(Board, Points_Tail, Legal_Point).
+find_an_empty_node_in_a_mill(Board, [Points_Head|Points_Tail], Legal_Point):-
+    \+member((Points_Head, y), Board),
+    \+member((Points_Head, z), Board),
+    Legal_Point = Points_Head.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Find the first empty position (in order of a - x) and it should always
+% succeed because we have 24, positions and 18 merels.
+find_an_empty_node(Board, [Points_Head|Points_Tail], Legal_Point):-
+    member((Points_Head, y), Board),
+    find_an_empty_node(Board, Points_Tail, Legal_Point).
+find_an_empty_node(Board, [Points_Head|Points_Tail], Legal_Point):-
+    member((Points_Head, z), Board),
+    find_an_empty_node(Board, Points_Tail, Legal_Point).
+find_an_empty_node(Board, [Points_Head|Points_Tail], Legal_Point):-
+    Legal_Point = Points_Head.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Returns true if Node1, Node2 and Node3 are full with merels of one player and
+% also if they are in a row.
+% potential mills with one missing merel.
+potential_mill(Node1, Node2, Node3, Player, Board):-
+    row(Node1, Node2, Node3),
+    other_player(Player, Other),
+    merel_on_board((Node2, Player), Board),
+    merel_on_board((Node3, Player), Board),
+    \+merel_on_board((Node1, Other), Board),
+    \+merel_on_board((Node1, Player), Board).
+potential_mill(Node1, Node2, Node3, Player, Board):-
+    row(Node1, Node2, Node3),
+    merel_on_board((Node1, Player), Board),
+    other_player(Player, Other),
+    merel_on_board((Node3, Player), Board),
+    \+merel_on_board((Node2, Other), Board),
+    \+merel_on_board((Node2, Player), Board).
+potential_mill(Node1, Node2, Node3, Player, Board):-
+    row(Node1, Node2, Node3),
+    merel_on_board((Node1, Player), Board),
+    other_player(Player, Other),
+    merel_on_board((Node2, Player), Board),
+    \+merel_on_board((Node3, Other), Board),
+    \+merel_on_board((Node3, Player), Board).
+% potential mills with two missing merel.
+potential_mill(Node1, Node2, Node3, Player, Board):-
+    row(Node1, Node2, Node3),
+    merel_on_board((Node1, Player), Board),
+    other_player(Player, Other),
+    \+merel_on_board((Node2, Player), Board),
+    \+merel_on_board((Node2, Other), Board),
+    \+merel_on_board((Node3, Other), Board),
+    \+merel_on_board((Node3, Player), Board).
+potential_mill(Node1, Node2, Node3, Player, Board):-
+    row(Node1, Node2, Node3),
+    other_player(Player, Other),
+    \+merel_on_board((Node1, Other), Board),
+    \+merel_on_board((Node1, Player), Board),
+    merel_on_board((Node2, Player), Board),
+    \+merel_on_board((Node3, Other), Board),
+    \+merel_on_board((Node3, Player), Board).
+potential_mill(Node1, Node2, Node3, Player, Board):-
+    row(Node1, Node2, Node3),
+    other_player(Player, Other),
+    \+merel_on_board((Node1, Other), Board),
+    \+merel_on_board((Node1, Player), Board),
+    \+merel_on_board((Node2, Player), Board),
+    \+merel_on_board((Node2, Other), Board),
+    merel_on_board((Node3, Player), Board).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A predicate that finds out 3 merels are in a row (3 possible ways because we
+% only have 1 node of three needed nodes).
+find_a_potential_mill(Node, Board, Player):-
+    \+merel_on_board((Node, Player), Board),
+    potential_mill(Node, _, _, Player, Board).
+find_a_potential_mill(Node, Board, Player):-
+    \+merel_on_board((Node, Player), Board),
+    potential_mill(_, Node, _, Player, Board).
+find_a_potential_mill(Node, Board, Player):-
+    \+merel_on_board((Node, Player), Board),
+    potential_mill(_, _, Node, Player, Board).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Choose a removal.
 choose_remove(Player, Point, Board):-
@@ -562,7 +747,7 @@ play :-
     initial_board(Board),
     display_board(Board),
     is_player1(Player),
-    play(8, Player, []).
+    play(6, Player, []).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % End of the program.
