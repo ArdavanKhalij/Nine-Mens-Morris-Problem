@@ -15,4 +15,5 @@ There are some simple strategies which will help a computer win at Merels. They 
 4. Otherwise, move your pieces together.<br>
 We will use these simple heuristics at the end of the practical.<br>
 
-This description is from Dr. Geraint Wiggins and Mr. Steven Homer.
+This **description** is from Dr. Geraint Wiggins and Mr. Steven Homer.
+The file **io.pl** is written by Dr. Geraint Wiggins and Mr. Steven Homer.
